@@ -23,6 +23,30 @@ While the background table is being updated, users querying the public view will
 
 ---
 
+## Technical Design: Control Models & DAG Dependencies
+
+**The Freeze and Thaw Logic (Time Travel)**
+The core magic of this demo relies on BigQuery's Time Travel capabilities (`FOR SYSTEM_TIME AS OF`). 
+*   **Freeze (`freeze_view` macro):** When executed, this macro dynamically polls BigQuery for the `CURRENT_TIMESTAMP()`. It then runs a `CREATE OR REPLACE VIEW` statement that permanently hardcodes that exact timestamp into the view's SQL definition. Anyone querying this view is now looking at historical data frozen at that moment, completely immune to any subsequent updates we run on the underlying table.
+*   **Thaw (`thaw_view` macro):** Once our messy, multi-step updates are fully complete, this macro executes another `CREATE OR REPLACE VIEW`. This time, it strips away the `FOR SYSTEM_TIME AS OF` clause. The view instantly reverts to being a standard, pass-through view, and the fully updated, consistent data is atomically exposed to end-users.
+
+To automate this workflow securely within a single `dbt run` command, we must force dbt to execute the freeze, the updates, and the thaw in a very specific order. However, neither the lock processes nor the update processes create standard tables or views that can be `ref`-ed within standard SQL.
+
+**The `no_op` Materialization**
+The `freeze_inventory` and `thaw_inventory` models aren't creating data; they are executing BigQuery DDL (via our macros) purely for control flow. If we materialized these as standard `view`s, dbt would pollute the dataset by generating empty, useless views. 
+To solve this, we use a custom `no_op` materialization (`macros/no_op.sql`). This tells dbt to run our `post_hook` logic (the time travel macros) but completely skip creating any database object.
+
+**Enforcing the DAG with Comment-Refs**
+Because `no_op` and `raw_sql` models don't build queryable relations, we cannot use `SELECT * FROM {{ ref('freeze_inventory') }}` in our SQL to force a dependency. BigQuery would throw a "Table Not Found" error.
+Instead, we place dbt `ref()` calls inside SQL comments at the top of the files:
+```sql
+-- Depends on: {{ ref('freeze_inventory') }}
+```
+*   **dbt's perspective:** It parses the Jinja before sending anything to the database, sees the `ref()`, and understands that this model *must* wait for `freeze_inventory` to finish.
+*   **BigQuery's perspective:** It receives the final compiled SQL, sees a harmless comment, ignores it, and perfectly executes the `UPDATE` statement below it.
+
+---
+
 ## Step-by-Step Demo Guide
 
 ### 1. Prerequisites
