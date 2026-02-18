@@ -29,3 +29,19 @@ Happy modeling!
 [0m18:11:11.305252 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1007c7a90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x109775990>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1093a3290>]}
 [0m18:11:11.306201 [debug] [MainThread]: Flushing usage events
 [0m18:11:11.684284 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m18:31:43.887651 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10256c290>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x105309c90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10530a550>]}
+
+
+============================== 18:31:43.891387 | 7c29e2a6-8798-49f6-9b83-e0d44d129944 ==============================
+[0m18:31:43.891387 [info ] [MainThread]: Running with dbt=1.11.5
+[0m18:31:43.891761 [debug] [MainThread]: running dbt with arguments {'use_experimental_parser': 'False', 'introspect': 'True', 'invocation_command': 'dbt seed --full-refresh', 'log_cache_events': 'False', 'quiet': 'False', 'cache_selected_only': 'False', 'debug': 'False', 'write_json': 'True', 'printer_width': '80', 'fail_fast': 'False', 'profiles_dir': '/Users/ktchana/.dbt', 'partial_parse': 'True', 'static_parser': 'True', 'use_colors': 'True', 'target_path': 'None', 'empty': 'None', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'log_format': 'default', 'warn_error': 'None', 'indirect_selection': 'eager', 'version_check': 'True', 'no_print': 'None', 'log_path': 'logs', 'send_anonymous_usage_stats': 'True'}
+[0m18:31:43.892180 [error] [MainThread]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /Users/ktchana/Documents/Tasks/202602_Sinch_Snowflake_Migration/dbt_txn_demo/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m18:31:43.893971 [debug] [MainThread]: Resource report: {"command_name": "seed", "command_success": false, "command_wall_clock_time": 0.062213875, "process_in_blocks": "0", "process_kernel_time": 0.183685, "process_mem_max_rss": "106102784", "process_out_blocks": "0", "process_user_time": 0.769663}
+[0m18:31:43.894282 [debug] [MainThread]: Command `dbt seed` failed at 18:31:43.894223 after 0.06 seconds
+[0m18:31:43.894521 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x100a63b90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10519ab90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1009ed450>]}
+[0m18:31:43.894739 [debug] [MainThread]: Flushing usage events
+[0m18:31:44.248792 [debug] [MainThread]: An error was encountered while trying to flush usage events
