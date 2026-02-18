@@ -56,25 +56,43 @@ dbt run --select public_inventory
 ```
 *Current State:* Widget A has 100 qty, Widget B has 200 qty.
 
-### 3. Freeze the View (Snapshot Isolation)
-Before starting our big updates, lock the public view to the current time:
+### 3. Run the Demo
+
+You can execute the demo in two different ways depending on what you want to test.
+
+#### Option 1: Automated DAG Execution (Recommended)
+This method relies on dbt's built-in dependency management. We have configured `freeze_inventory` to run first, followed by the two update scripts, and finally `thaw_inventory`.
+
+Run the entire pipeline in one command:
 ```bash
-dbt run-operation freeze_view --args '{view_name: "public_inventory", source_table: "live_inventory"}'
+dbt run
+```
+**What happens:**
+1. dbt runs `freeze_inventory`, which takes a snapshot of the current time and locks `public_inventory` to that timestamp.
+2. dbt runs `update_part_1` and `update_part_2` (potentially in parallel), modifying the base `live_inventory` table behind the scenes.
+3. dbt runs `thaw_inventory`, which removes the time-travel clause, instantly exposing the fully updated table to end-users atomically.
+
+#### Option 2: Step-by-Step Manual Execution
+This method allows you to query the database mid-transaction to truly prove that users are isolated from partial updates.
+
+**Step A: Freeze the View**
+Lock the public view to the current time:
+```bash
+dbt run --select freeze_inventory
 ```
 *Wait 10-20 seconds before proceeding to ensure BigQuery's time travel buffer captures the change state clearly.*
 
-### 4. Execute the Multi-Step Update
+**Step B: Execute the Updates**
 Run our partial updates on the underlying `live_inventory` table:
 ```bash
 dbt run --select update_part_1
 dbt run --select update_part_2
 ```
-*Behind the scenes:* The live table now has Widget A at 500 and Widget B at 600.
-*If you query `public_inventory` right now:* You will still see the old values (100 and 200) because the view is frozen! End-users are isolated from the mid-update state.
+*Proof of Isolation:* If you query `public_inventory` right now, you will still see the old values (100 and 200) because the view is frozen to the past! The underlying `live_inventory` table, however, has Widget A at 500 and Widget B at 600.
 
-### 5. Thaw the View
+**Step C: Thaw the View**
 Now that updates are complete, restore the view to point to the live table:
 ```bash
-dbt run-operation thaw_view --args '{view_name: "public_inventory", source_table: "live_inventory"}'
+dbt run --select thaw_inventory
 ```
-*If you query `public_inventory` right now:* You will now see the new, fully updated values (500 and 600). The transaction has been exposed to end-users atomically!
+*Result:* Querying `public_inventory` will now show the new, fully updated values (500 and 600) together.
