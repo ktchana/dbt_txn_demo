@@ -27,8 +27,31 @@ This project demonstrates how to achieve this using a custom dbt materialization
 
 ## How to Run the Demo
 
+### Prerequisites
+
+Ensure you have dbt installed for BigQuery:
+```bash
+pip install dbt-bigquery
+```
+
 1.  **Setup your Profile:**
     *   Ensure your `~/.dbt/profiles.yml` has a profile named `dbt_txn_demo` configured for your BigQuery project.
+    *   Example `~/.dbt/profiles.yml`:
+    ```yaml
+    dbt_txn_demo:
+      target: dev
+      outputs:
+        dev:
+          type: bigquery
+          method: oauth
+          project: your-gcp-project-id
+          dataset: your-bigquery-dataset
+          threads: 1
+          job_execution_timeout_seconds: 300
+          job_retries: 1
+          location: europe-west2 # Must match the location of your BigQuery dataset
+          priority: interactive
+    ```
 
 2.  **Load the Seed Data:**
     *   Run `dbt seed` to create the initial `bank_accounts` table in your dataset.
