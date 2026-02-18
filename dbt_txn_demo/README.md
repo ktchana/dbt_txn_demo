@@ -25,6 +25,29 @@ This project demonstrates how to achieve this using a custom dbt materialization
     *   Commits the changes (`COMMIT TRANSACTION;`) *only* if both updates succeed.
     *   Includes an error handler (`EXCEPTION WHEN ERROR THEN ROLLBACK TRANSACTION;`) to undo any partial changes if the script fails midway through.
 
+---
+
+## Technical Design: BigQuery Scripting in dbt
+
+To perform multi-statement, atomic updates, we must bridge the gap between BigQuery's procedural capabilities and dbt's paradigm. 
+
+**The Limitation of Standard dbt**
+By default, dbt wraps all model SQL inside DDL statements like `CREATE OR REPLACE TABLE ... AS ( ... )`. If you write a `BEGIN TRANSACTION` block in a standard dbt model, the generated BigQuery statement becomes `CREATE TABLE AS (BEGIN TRANSACTION; ... )`, which is invalid syntax and fails immediately.
+
+**The `raw_sql` Materialization**
+To bypass this limitation, we created `macros/raw_sql.sql`. This custom materialization simply takes the raw `.sql` file contents and executes it directly against BigQuery using `{% call statement('main') %}`. It explicitly skips the `CREATE TABLE` wrapping step entirely.
+
+**The Transaction Logic**
+With `raw_sql` established, we can write pure BigQuery Scripting inside `models/transfer_money.sql`.
+*   We use a `BEGIN...EXCEPTION...END` block to handle control flow.
+*   We explicitly declare `BEGIN TRANSACTION;`.
+*   We run multiple `UPDATE` statements sequentially.
+*   If *every* statement succeeds, we reach `COMMIT TRANSACTION`, and all changes are permanently saved to the destination tables atomically. 
+*   If *any* statement fails (e.g., due to a constraint violation or syntax error), execution immediately jumps to the `EXCEPTION` block. The `ROLLBACK TRANSACTION;` command fires, completely reverting all partial changes made by preceding statements in the block.
+*   Finally, we do a `RAISE` inside the exception handler so dbt registers the run as a "Failed" task instead of a silent success.
+
+---
+
 ## How to Run the Demo
 
 ### Prerequisites
