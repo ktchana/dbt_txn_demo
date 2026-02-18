@@ -45,3 +45,33 @@ Runtime Error
 [0m18:31:43.894521 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x100a63b90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x10519ab90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x1009ed450>]}
 [0m18:31:43.894739 [debug] [MainThread]: Flushing usage events
 [0m18:31:44.248792 [debug] [MainThread]: An error was encountered while trying to flush usage events
+[0m11:43:41.393762 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x110277250>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x110295290>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x110276d90>]}
+
+
+============================== 11:43:41.397861 | 061707ef-d2cc-44c2-a2ea-d1f172bdfe03 ==============================
+[0m11:43:41.397861 [info ] [MainThread]: Running with dbt=1.11.5
+[0m11:43:41.398274 [debug] [MainThread]: running dbt with arguments {'warn_error': 'None', 'fail_fast': 'False', 'static_parser': 'True', 'empty': 'None', 'write_json': 'True', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'use_colors': 'True', 'target_path': 'None', 'introspect': 'True', 'debug': 'False', 'version_check': 'True', 'log_cache_events': 'False', 'send_anonymous_usage_stats': 'True', 'use_experimental_parser': 'False', 'log_path': 'logs', 'profiles_dir': '/Users/ktchana/.dbt', 'printer_width': '80', 'no_print': 'None', 'invocation_command': 'dbt init', 'indirect_selection': 'eager', 'log_format': 'default', 'cache_selected_only': 'False', 'partial_parse': 'True', 'quiet': 'False'}
+[0m11:43:52.896508 [debug] [MainThread]: Starter project path: /Users/ktchana/.pyenv/versions/3.11.3/envs/dbt-txn-demo/lib/python3.11/site-packages/dbt/include/starter_project
+[0m11:43:52.919725 [info ] [MainThread]: 
+Your new dbt project "dbt_view_time_travel_demo" was created!
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m11:43:52.920171 [info ] [MainThread]: Setting up your profile.
+[0m11:44:41.638539 [info ] [MainThread]: Profile dbt_view_time_travel_demo written to /Users/ktchana/.dbt/profiles.yml using target's profile_template.yml and your supplied values. Run 'dbt debug' to validate the connection.
+[0m11:44:41.670414 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 60.334953, "process_in_blocks": "0", "process_kernel_time": 1.653637, "process_mem_max_rss": "365936640", "process_out_blocks": "0", "process_user_time": 3.177634}
+[0m11:44:41.672842 [debug] [MainThread]: Command `dbt init` succeeded at 11:44:41.672588 after 60.34 seconds
+[0m11:44:41.673691 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x100af3b10>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x110295a90>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x110295b10>]}
+[0m11:44:41.674282 [debug] [MainThread]: Flushing usage events
+[0m11:44:42.071556 [debug] [MainThread]: An error was encountered while trying to flush usage events
